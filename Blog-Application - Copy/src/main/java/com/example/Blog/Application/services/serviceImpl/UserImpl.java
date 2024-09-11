@@ -4,12 +4,12 @@ import com.example.Blog.Application.DTO.GenericResponse;
 import com.example.Blog.Application.DTO.UserDto;
 import com.example.Blog.Application.entities.User;
 import com.example.Blog.Application.exception.CodeException;
+import com.example.Blog.Application.exception.ErrorCode;
 import com.example.Blog.Application.exception.ResourceNotFoundException;
 import com.example.Blog.Application.repositories.readOnlyRepo.UserRepo;
 import com.example.Blog.Application.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.codec.CodecException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -75,7 +75,7 @@ public class UserImpl implements UserService {
             if (!CollectionUtils.isEmpty(users)){
                 collect = users.stream().map(user -> this.UserToDto(user)).collect(Collectors.toList());
             }else{
-                throw new CodeException("User Not found",101);
+                throw new CodeException("User Not found", ErrorCode.COMMON);
             }
             return new ResponseEntity<>(new GenericResponse("User Fetched Successfully", true, HttpStatus.OK.value(), collect), HttpStatus.OK);
         }catch(Exception e){

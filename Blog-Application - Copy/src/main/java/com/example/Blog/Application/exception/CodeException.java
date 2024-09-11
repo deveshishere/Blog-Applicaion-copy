@@ -1,20 +1,29 @@
 package com.example.Blog.Application.exception;
 
-import lombok.Data;
+public class CodeException extends Exception {
+    private final ErrorCode code;
 
-@Data
-public class CodeException extends Exception{
-
-    private String error;
-
-    CodeException(){
-
+    public CodeException(ErrorCode code) {
+        super();
+        this.code = code;
     }
 
-    public CodeException(String error) {
-        this.error = error;
+    public CodeException(String message, Throwable cause, ErrorCode code) {
+        super(message, cause);
+        this.code = code;
     }
-    public CodeException(String error,int code) {
-        this.error = error;
+
+    public CodeException(String message, ErrorCode code) {
+        super(message);
+        this.code = code;
+    }
+
+    public CodeException(Throwable cause, ErrorCode code) {
+        super(cause);
+        this.code = code;
+    }
+
+    public ErrorCode getCode() {
+        return this.code;
     }
 }
