@@ -11,7 +11,7 @@ public interface UserService {
     UserDto createUser(UserDto userDto);
     UserDto updateUser(UserDto userDto,Integer userId);
     UserDto getUSerBtId(Integer userId);
-    List<UserDto> getAllUsers();
+    ResponseEntity<GenericResponse> getAllUsers();
     void deleteUser(Integer UserId);
 
 //    ResponseEntity<GenericResponse> fetchAPI();

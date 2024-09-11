@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -14,15 +15,14 @@ public class UserDto {
     @JsonProperty("id")
     private int id;
 
-    @NotEmpty
+    @NotBlank(message = "Name can not be empty ")
     private String name;
 
     @Email
-    @Size(min = 4,message = "Email must contain 4 char")
+    @Size(min = 4,message = "Email must contain 4 char ")
     private String email;
 
-    @NotEmpty
-    @Size(min = 4,max = 10,message = "Password must contain 4 char")
+    @NotBlank(message = "Password must contain 4 char ")
     private String password;
 
     private String about;

@@ -1,14 +1,21 @@
 package com.example.Blog.Application.services.serviceImpl;
 
+import com.example.Blog.Application.DTO.GenericResponse;
 import com.example.Blog.Application.DTO.UserDto;
 import com.example.Blog.Application.entities.User;
+import com.example.Blog.Application.exception.CodeException;
 import com.example.Blog.Application.exception.ResourceNotFoundException;
 import com.example.Blog.Application.repositories.readOnlyRepo.UserRepo;
 import com.example.Blog.Application.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.codec.CodecException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,10 +23,10 @@ import java.util.stream.Collectors;
 public class UserImpl implements UserService {
 
     @Autowired
-    private UserRepo userRepo;
+    public UserRepo userRepo;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public ModelMapper modelMapper;
 //
 //    private final RestTemplate restTemplate;
 //
@@ -43,10 +50,10 @@ public class UserImpl implements UserService {
         User user = this.userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setAbout(userDto.getAbout());
+        user.setName(userDto.getName().trim());
+        user.setEmail(userDto.getEmail().trim());
+        user.setPassword(userDto.getPassword().trim());
+        user.setAbout(userDto.getAbout().trim());
         User save = this.userRepo.save(user);
         UserDto userDto1 = this.UserToDto(save);
         return userDto1;
@@ -61,10 +68,19 @@ public class UserImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = this.userRepo.findAll();
-        List<UserDto> collect = users.stream().map(user -> this.UserToDto(user)).collect(Collectors.toList());
-        return collect;
+    public ResponseEntity<GenericResponse> getAllUsers() {
+        List<UserDto> collect = new ArrayList<>();
+        try {
+            List<User> users = this.userRepo.findAll();
+            if (!CollectionUtils.isEmpty(users)){
+                collect = users.stream().map(user -> this.UserToDto(user)).collect(Collectors.toList());
+            }else{
+                throw new CodeException("User Not found",101);
+            }
+            return new ResponseEntity<>(new GenericResponse("User Fetched Successfully", true, HttpStatus.OK.value(), collect), HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(new GenericResponse(e.getMessage(), true, HttpStatus.OK.value(), null), HttpStatus.OK);
+        }
     }
 
     @Override
